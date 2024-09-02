@@ -4,6 +4,7 @@ import { app, server } from '../index';
 import { addCandidate } from '../presentation/controllers/candidateController';
 import { validateName } from '../application/validator';
 import { Education } from '../domain/models/Education';
+import { Candidate } from '../domain/models/Candidate';
 import { PrismaClient } from '@prisma/client';
 
 jest.mock('../presentation/controllers/candidateController');
@@ -12,6 +13,11 @@ jest.mock('@prisma/client', () => {
     education: {
       create: jest.fn(),
       update: jest.fn(),
+    },
+    candidate: {
+      create: jest.fn(),
+      update: jest.fn(),
+      findUnique: jest.fn(),
     },
     $disconnect: jest.fn(),
   };
