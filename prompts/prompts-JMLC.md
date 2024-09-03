@@ -124,3 +124,7 @@ Jest did not exit one second after the test run has completed.
 Parece ser que la variable `app` provoca el cuelgue porque deja el servidor arrancado y escuchando. ¿Como lo puedo cerrar?
 ```
 
+> Recuperamos la respuesta anterior que incluia los refactor a hacer para introducir el patrón Repository, ajustamos 2 cosas que daban error en CandidateRoutes y eliminamos CandidateController puesto que parece tener la misma lógica que CandidateRoutes y simplificamos.
+
+## Creación de un test unitario para CandidateService con mock de CandidateRepository
+
