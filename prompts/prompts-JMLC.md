@@ -1,4 +1,4 @@
-# Configuración de Jest (Cursor.sh)
+# Configuración de Jest (OK)
 ```
 Eres un programador experto en React.JS con Typescript y testing con Jest.
 Queremos incorporar testing en el proyecto actual usando Jest. 
@@ -36,7 +36,7 @@ Ahora el error es el siguiente:
 ```
 
 
-# Creación de tests para la funcionalidad de insertar candidatos en base de datos (Cursor.sh)
+# Creación de tests para la funcionalidad de insertar candidatos en base de datos (Rollback)
 
 > El primer prompt he tenido que iterarlo 3 veces porque no había forma de configurar bien el mock de Prisma. Al usar como referencia el enlace pasado en el enunciado del ejercicio se liaba, quizá porque no se usa Jest si no Vitest, otro framework que extiende de Jest.
 
@@ -65,5 +65,62 @@ Solucionamos un error usando Debug with AI de Cursor:
 Please help me debug this code. Only debug the latest error.
 ```
 
+> La solución también da error y la propuesta de solución ya indica refactorizar código de producción (Candidate.ts) para incluir en el constructor el objeto PrismaClient y poderlo pasar mockeado desde el test.
+> Se pregunta a Cursor que nos explique mejor el código de Candidate.ts para entender como funciona Prisma. 
+
+## Investigación de Prisma
 ```
+Puedes explicar este código?
+if (this.resumes.length > 0) {
+    candidateData.resumes = {
+        create: this.resumes.map(resume => ({
+            filePath: resume.filePath,
+            fileType: resume.fileType
+        }))
+    };
+}
 ```
+
+```
+de donde saca la función `create` de prisma? Donde está declarada o como sabe que debe usarla?
+```
+
+```
+De acuerdo, pero así como `prisma.candidate.update` es una función que se ve que pertenece al API de Prisma, donde está o qué hace realmente `candidateData.resumes = { create: ... }`?
+Esta sintaxis de Javascript que hace?
+```
+
+> Esto me ha ayudado a entender que Candidate.ts realmente se trata de un Active Record, acoplado a infraestructura y no a dominio. Por lo que o bien mockeamos Candidate.ts o bien pasamos PrismaClient por constructor
+
+```
+Al tratarse @Candidate.ts  de un Active Record muy ligado a infraestructura qué recomendación me das para poder mockear el acceso a base de datos en el test que queremos hacer en @tests-JMLC.test.ts para @candidateService.ts ?
+```
+
+> Ofrece que la opción más mantenible es la de usar el patrón Repository. Al tratarse de un refactor grande aseguraremos con un test E2E primero
+
+## Creación de un test E2E
+
+```
+Al tratarse de un refactor importante que puede romper alguna funcionalidad, primero crearemos un test E2E. Cual es la mejor opción para este test en el proyecto actual? 
+Ten en cuenta las dependencias actuales del fichero @package.json y que el objetivo del test será testear 2 casos:
+- Happy path de la creación de un candidato vía API REST. 
+- Creación erronea de un candidato vía API REST
+
+Utiliza el código y la definición del API para realizar este test.
+
+Detalla la configuración, si es necesaria para implementar el test.
+```
+
+ > Se utiliza "Debug with AI" para depurar un error en la librería "supertest" requerida
+
+```
+Puedes revisar el fichero de test porque se produce el siguiente warning al finalizar los test con o sin errores:
+
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+
+
+Parece ser que la variable `app` provoca el cuelgue porque deja el servidor arrancado y escuchando. ¿Como lo puedo cerrar?
+```
+
