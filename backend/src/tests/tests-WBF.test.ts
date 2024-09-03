@@ -6,6 +6,7 @@ import { validateName } from '../../src/application/validator';
 import { Education } from '../../src/domain/models/Education';
 import { PrismaClient } from '@prisma/client';
 
+// Mocking dependencies
 jest.mock('../../src/application/services/candidateService', () => ({
   addCandidate: jest.fn(),
 }));
@@ -41,6 +42,11 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
+// Tests for addCandidateController
 describe('addCandidateController', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
@@ -95,6 +101,7 @@ describe('addCandidateController', () => {
   });
 });
 
+// Tests for Candidate model
 describe('Candidate model', () => {
   let candidateInstance: any;
 
@@ -132,6 +139,7 @@ describe('Candidate model', () => {
   });
 });
 
+// Tests for Education model
 describe('Education Model', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -192,17 +200,16 @@ describe('Education Model', () => {
   });
 });
 
-afterAll(async () => {
-  await prisma.$disconnect();
-});
+// Tests for validateName function
+describe('validateName function', () => {
+  test('should throw an error for invalid names', () => {
+    expect(() => validateName('')).toThrow('Invalid name');
+    expect(() => validateName('A')).toThrow('Invalid name');
+    expect(() => validateName('ThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLengthThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLength')).toThrow('Invalid name');
+  });
 
-test('validateName should throw an error for invalid names', () => {
-  expect(() => validateName('')).toThrow('Invalid name');
-  expect(() => validateName('A')).toThrow('Invalid name');
-  expect(() => validateName('ThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLengthThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLength')).toThrow('Invalid name');
-});
-
-test('validateName should not throw an error for valid names', () => {
-  expect(() => validateName('John')).not.toThrow();
-  expect(() => validateName('María')).not.toThrow();
+  test('should not throw an error for valid names', () => {
+    expect(() => validateName('John')).not.toThrow();
+    expect(() => validateName('María')).not.toThrow();
+  });
 });
