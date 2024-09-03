@@ -142,3 +142,18 @@ Puedes implementar el primer test propuesto con el Happy path.
 
 > Falla porque en Education, WorkExperience y Resume siguen siendo Active Records, por lo que falla al usar Prisma.
 > Se simplifica el Happy Path para crear un Candidato sin relaciones
+
+## Refactor para migrar Education a patrón Repository
+
+```
+Necesitamos transformar el Active Record @Education.ts  a patrón Repository con la implementación de Prisma. 
+Puedes realizar los cambios necesarios en todo el proyecto?
+```
+
+> Ok aunque se sigue haciendo algun pequeño ajuste de forma manual y genera más métodos (findById, update, delete, ...) de los necesarios (save)
+
+```
+Añade un test unitario similar al del Happy Path "should add a candidate successfully" para crear un candidato con el campo "educations" rellenado con 2 registros válidos.
+```
+
+> Ok, aunque se realizan algunos assert que no corresponden con la respuesta que devuelve candidateService realmente. Se deja comentado.

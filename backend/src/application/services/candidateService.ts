@@ -4,9 +4,13 @@ import { Education } from '../../domain/models/Education';
 import { WorkExperience } from '../../domain/models/WorkExperience';
 import { Resume } from '../../domain/models/Resume';
 import { CandidateRepository } from '../../domain/repositories/CandidateRepository';
+import { EducationRepository } from '../../domain/repositories/EducationRepository';
 
 export class CandidateService {
-    constructor(private candidateRepository: CandidateRepository) {}
+    constructor(
+        private candidateRepository: CandidateRepository,
+        private educationRepository: EducationRepository
+    ) {}
   
     async addCandidate(candidateData: any): Promise<Candidate> {
         try {
@@ -25,7 +29,7 @@ export class CandidateService {
                 for (const education of candidateData.educations) {
                     const educationModel = new Education(education);
                     educationModel.candidateId = candidateId;
-                    await educationModel.save();
+                    await this.educationRepository.save(educationModel);
                     candidate.education.push(educationModel);
                 }
             }

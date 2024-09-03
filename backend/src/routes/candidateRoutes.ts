@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { CandidateService } from '../application/services/candidateService';
 import { PrismaCandidateRepository } from '../infrastructure/repositories/PrismaCandidateRepository';
+import { PrismaEducationRepository } from '../infrastructure/repositories/PrismaEducationRepository';
 import { PrismaClient } from '@prisma/client';
 
 const router = Router();
@@ -11,7 +12,10 @@ router.post('/', async (req, res) => {
     // console.log(req.body); //Just in case you want to inspect the request body
     const candidateData = req.body;
 
-    const candidateService = new CandidateService(new PrismaCandidateRepository(prisma));
+    const candidateService = new CandidateService(
+      new PrismaCandidateRepository(prisma),
+      new PrismaEducationRepository(prisma)
+    );
     const result = await candidateService.addCandidate(candidateData);
     res.status(201).send(result);
   } catch (error) {
