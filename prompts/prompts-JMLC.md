@@ -128,3 +128,17 @@ Parece ser que la variable `app` provoca el cuelgue porque deja el servidor arra
 
 ## Creación de un test unitario para CandidateService con mock de CandidateRepository
 
+```
+Bien. Ahora queremos introducir varios test unitarios para @candidateService.ts dentro del fichero @tests-JMLC.test.ts 
+
+Estos test deben probar toda la funcionalidad, no solo el happy path. 
+
+Antes de escribir código, lista los test propuestos.
+```
+
+```
+Puedes implementar el primer test propuesto con el Happy path.
+```
+
+> Falla porque en Education, WorkExperience y Resume siguen siendo Active Records, por lo que falla al usar Prisma.
+> Se simplifica el Happy Path para crear un Candidato sin relaciones

@@ -85,3 +85,48 @@ describe('Candidate API', () => {
     expect(response.body.message).toContain('Error: Invalid email');
   });
 });
+
+import { CandidateService } from '../application/services/candidateService';
+import { CandidateRepository } from '../domain/repositories/CandidateRepository';
+import { Candidate } from '../domain/models/Candidate';
+
+// Mock del CandidateRepository
+const mockCandidateRepository: jest.Mocked<CandidateRepository> = {
+  save: jest.fn(),
+};
+
+describe('CandidateService', () => {
+  let candidateService: CandidateService;
+
+  beforeEach(() => {
+    candidateService = new CandidateService(mockCandidateRepository);
+    jest.clearAllMocks();
+  });
+
+  it('should add a candidate successfully', async () => {
+    const candidateData = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      phone: '600123456',
+      address: '123 Main St, City'
+    };
+
+    const savedCandidate = new Candidate({
+      id: 1,
+      ...candidateData
+    });
+
+    mockCandidateRepository.save.mockResolvedValue(savedCandidate);
+
+    const result = await candidateService.addCandidate(candidateData);
+
+    expect(mockCandidateRepository.save).toHaveBeenCalledTimes(1);
+    expect(mockCandidateRepository.save).toHaveBeenCalledWith(expect.any(Candidate));
+    expect(result).toEqual(savedCandidate);
+    expect(result.id).toBe(1);
+    expect(result.firstName).toBe(candidateData.firstName);
+    expect(result.lastName).toBe(candidateData.lastName);
+    expect(result.email).toBe(candidateData.email);
+  });
+});
