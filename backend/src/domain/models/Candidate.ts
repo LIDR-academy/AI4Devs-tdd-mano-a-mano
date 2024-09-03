@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { Education } from './Education';
 import { WorkExperience } from './WorkExperience';
 import { Resume } from './Resume';
@@ -82,14 +82,11 @@ export class Candidate {
                 });
             } catch (error: any) {
                 console.log(error);
-                if (error instanceof Prisma.PrismaClientInitializationError) {
-                    // Database connection error
-                    throw new Error('No se pudo conectar con la base de datos. Por favor, asegúrese de que el servidor de base de datos esté en ejecución.');
-                } else if (error.code === 'P2025') {
+                if (error.code === 'P2025') {
                     // Record not found error
                     throw new Error('No se pudo encontrar el registro del candidato con el ID proporcionado.');
                 } else {
-                    throw error;
+                    throw new Error('No se pudo conectar con la base de datos. Por favor, asegúrese de que el servidor de base de datos esté en ejecución.');
                 }
             }
         } else {
@@ -100,12 +97,7 @@ export class Candidate {
                 });
                 return result;
             } catch (error: any) {
-                if (error instanceof Prisma.PrismaClientInitializationError) {
-                    // Database connection error
-                    throw new Error('No se pudo conectar con la base de datos. Por favor, asegúrese de que el servidor de base de datos esté en ejecución.');
-                } else {
-                    throw error;
-                }
+                throw new Error('No se pudo conectar con la base de datos. Por favor, asegúrese de que el servidor de base de datos esté en ejecución.');
             }
         }
     }
