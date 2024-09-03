@@ -78,6 +78,37 @@ npm start
 
 El servidor backend estará corriendo en http://localhost:3010 y el frontend estará disponible en http://localhost:3000.
 
+## Ejecutar Tests
+
+### Backend
+
+Navega al directorio del backend y ejecuta el comando de test:
+
+```bash
+cd backend
+npm test
+```
+
+Para ejecutar los tests en modo watch (útil durante el desarrollo):
+```
+npm run test:watch
+```
+
+### Frontend
+
+Navega al directorio del frontend y ejecuta el comando de test:
+```bash
+cd frontend
+npm test
+```
+
+Este comando iniciará Jest en modo watch, lo que significa que los tests se ejecutarán automáticamente cuando se realicen cambios en los archivos.
+
+Para ejecutar los tests una sola vez y obtener un informe de cobertura:
+```
+npm run test:coverage
+```
+
 ## Docker y PostgreSQL
 
 Este proyecto usa Docker para ejecutar una base de datos PostgreSQL. Así es cómo ponerlo en marcha:

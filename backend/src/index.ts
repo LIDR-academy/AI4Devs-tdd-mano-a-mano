@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import candidateRoutes from './routes/candidateRoutes';
 import { uploadFile } from './application/services/fileUploadService';
 import cors from 'cors';
+import http from 'http';
 
 // Extender la interfaz Request para incluir prisma
 declare global {
@@ -59,6 +60,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something broke!');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+export function startServer(): http.Server {
+  const server = http.createServer(app);
+  const port = 3010;
+  server.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+  return server;
+}
+
+// No inicies el servidor aquí, solo si este archivo se ejecuta directamente
+if (require.main === module) {
+  startServer();
+}
