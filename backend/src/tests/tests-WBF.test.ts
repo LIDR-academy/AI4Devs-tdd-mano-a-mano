@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { addCandidateController } from '../presentation/controllers/candidateController';
 import { addCandidate } from '../../src/application/services/candidateService';
 import { Candidate } from '../../src/domain/models/Candidate';
+import { validateName } from '../../src/application/validator';
+import { Education } from '../../src/domain/models/Education';
+import { PrismaClient } from '@prisma/client';
 
 jest.mock('../../src/application/services/candidateService', () => ({
   addCandidate: jest.fn(),
@@ -12,6 +15,31 @@ jest.mock('../../src/domain/models/Candidate', () => ({
     save: jest.fn(),
   })),
 }));
+
+jest.mock('@prisma/client', () => {
+  const mockPrismaClient = {
+    education: {
+      create: jest.fn(),
+      update: jest.fn(),
+    },
+    candidate: {
+      create: jest.fn(),
+      update: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    $disconnect: jest.fn(),
+  };
+  return { PrismaClient: jest.fn(() => mockPrismaClient) };
+});
+
+const prisma = new PrismaClient();
+prisma.$disconnect = jest.fn();
+
+jest.setTimeout(30000); // Set global timeout to 30 seconds
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('addCandidateController', () => {
   let req: Partial<Request>;
@@ -102,4 +130,79 @@ describe('Candidate model', () => {
       expect(error).toEqual(new Error('Database error'));
     }
   });
+});
+
+describe('Education Model', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should create a new education record', async () => {
+    const mockEducationData = {
+      institution: 'Test University',
+      title: 'Bachelor of Science',
+      startDate: '2020-01-01',
+      endDate: '2024-01-01',
+      candidateId: 1,
+    };
+
+    const mockEducation = new Education(mockEducationData);
+    prisma.education.create = jest.fn().mockResolvedValue(mockEducationData);
+
+    const result = await mockEducation.save();
+
+    expect(prisma.education.create).toHaveBeenCalledWith({
+      data: {
+        institution: 'Test University',
+        title: 'Bachelor of Science',
+        startDate: new Date('2020-01-01'),
+        endDate: new Date('2024-01-01'),
+        candidateId: 1,
+      },
+    });
+    expect(result).toEqual(mockEducationData);
+  });
+
+  test('should update an existing education record', async () => {
+    const mockEducationData = {
+      id: 1,
+      institution: 'Test University',
+      title: 'Bachelor of Science',
+      startDate: '2020-01-01',
+      endDate: '2024-01-01',
+      candidateId: 1,
+    };
+
+    const mockEducation = new Education(mockEducationData);
+    prisma.education.update = jest.fn().mockResolvedValue(mockEducationData);
+
+    const result = await mockEducation.save();
+
+    expect(prisma.education.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: {
+        institution: 'Test University',
+        title: 'Bachelor of Science',
+        startDate: new Date('2020-01-01'),
+        endDate: new Date('2024-01-01'),
+        candidateId: 1,
+      },
+    });
+    expect(result).toEqual(mockEducationData);
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
+test('validateName should throw an error for invalid names', () => {
+  expect(() => validateName('')).toThrow('Invalid name');
+  expect(() => validateName('A')).toThrow('Invalid name');
+  expect(() => validateName('ThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLengthThisNameIsWayTooLongToBeValidBecauseItExceedsTheMaximumAllowedLength')).toThrow('Invalid name');
+});
+
+test('validateName should not throw an error for valid names', () => {
+  expect(() => validateName('John')).not.toThrow();
+  expect(() => validateName('María')).not.toThrow();
 });
