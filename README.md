@@ -88,7 +88,7 @@ Ejecuta el siguiente comando para iniciar el contenedor Docker:
 ```
 docker-compose up -d
 ```
-Esto iniciará una base de datos PostgreSQL en un contenedor Docker. La bandera -d corre el contenedor en modo separado, lo que significa que se ejecuta en segundo plano.
+Esto iniciará una base de datos PostgreSQL en un contenedor Docker. La bandera -d corre el contenedor en modo separado, lo que significa que se ejecuta en segundo plancd/o.
 
 Para acceder a la base de datos PostgreSQL, puedes usar cualquier cliente PostgreSQL con los siguientes detalles de conexión:
  - Host: localhost
